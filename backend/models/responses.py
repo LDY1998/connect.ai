@@ -15,3 +15,28 @@ class Paper(BaseModel):
     citationCount: int | None = None
     externalIds: dict[str, str] | None = None
     url: str | None = None
+
+
+class NodePosition(BaseModel):
+    x: float
+    y: float
+
+
+class GraphNode(BaseModel):
+    id: str
+    position: NodePosition
+    data: Paper
+    type: str = "paper"
+
+
+class GraphEdge(BaseModel):
+    id: str
+    source: str
+    target: str
+    type: str = "citation"
+
+
+class GraphData(BaseModel):
+    nodes: list[GraphNode]
+    edges: list[GraphEdge]
+    seedPaperId: str
