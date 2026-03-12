@@ -1,13 +1,14 @@
 from fastapi import APIRouter, HTTPException
 
-from services.paper_provider import PaperProvider, StubPaperProvider
+from services.paper_provider import PaperProvider, OpenAlexProvider
 from models.requests import ResolveRequest
 from models.responses import Paper
+from config import get_settings
 
 router = APIRouter()
 
-# Swap StubPaperProvider for a real implementation when API access is available
-_provider: PaperProvider = StubPaperProvider()
+settings = get_settings()
+_provider: PaperProvider = OpenAlexProvider(email=settings.openalex_email)
 
 
 @router.post("/resolve")
