@@ -21,6 +21,7 @@ class GraphNode(BaseModel):
     id: str
     data: Paper
     type: str = "paper"
+    pool: str | None = None  # "core" | "related" | "peripheral" | None (seed)
 
 
 class GraphEdge(BaseModel):

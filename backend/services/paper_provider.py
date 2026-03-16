@@ -25,6 +25,14 @@ class PaperProvider(ABC):
     async def get_references(self, paper_id: str, limit: int = 60) -> list[Paper]:
         """Return up to `limit` papers that the given paper references."""
 
+    @abstractmethod
+    async def get_reference_ids(self, paper_id: str) -> set[str]:
+        """IDs of papers this paper references. One API call, no metadata."""
+
+    @abstractmethod
+    async def get_citation_ids(self, paper_id: str, limit: int = 100) -> set[str]:
+        """IDs of papers that cite this paper. One API call, no metadata."""
+
     async def aclose(self) -> None:
         """Optional teardown for providers that hold open connections."""
 
@@ -123,6 +131,12 @@ class StubPaperProvider(PaperProvider):
         ]
         return [_STUB_PAPERS[i] for i in refs[:limit] if i in _STUB_PAPERS]
 
+    async def get_reference_ids(self, paper_id: str) -> set[str]:
+        return set(_STUB_GRAPH.get(paper_id, []))
+
+    async def get_citation_ids(self, paper_id: str, limit: int = 100) -> set[str]:
+        return {src for src, targets in _STUB_GRAPH.items() if paper_id in targets}
+
 
 # ---------------------------------------------------------------------------
 # OpenAlex implementation — free, no API key required.
@@ -180,6 +194,27 @@ class OpenAlexProvider(PaperProvider):
         )
         resp.raise_for_status()
         return [self._parse_work(w) for w in resp.json().get("results", [])]
+
+    async def get_reference_ids(self, paper_id: str) -> set[str]:
+        """IDs of papers this work references. Single API call, no metadata."""
+        resp = await self._client.get(
+            f"/works/{paper_id}", params={"select": "referenced_works"}
+        )
+        resp.raise_for_status()
+        return {self._short_id(u) for u in resp.json().get("referenced_works", [])}
+
+    async def get_citation_ids(self, paper_id: str, limit: int = 100) -> set[str]:
+        """IDs of papers that cite this work. Single API call, no metadata."""
+        resp = await self._client.get(
+            "/works",
+            params={
+                "filter": f"cites:{paper_id}",
+                "per-page": min(limit, 200),
+                "select": "id",
+            },
+        )
+        resp.raise_for_status()
+        return {self._short_id(w["id"]) for w in resp.json().get("results", [])}
 
     async def get_references(self, paper_id: str, limit: int = 60) -> list[Paper]:
         """Papers referenced by the given work."""
