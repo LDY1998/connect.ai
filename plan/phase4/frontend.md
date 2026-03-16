@@ -1,4 +1,4 @@
-# Phase 2: Frontend Goals
+# Phase 4: Frontend Goals
 
 ## Overview
 Implement the interactive citation graph using React Flow. The frontend will fetch the pre-computed graph layout from the backend and render it using custom nodes and edges.
@@ -112,7 +112,7 @@ Update `frontend/app/graph/[paperId]/page.tsx`:
 - Keep the server component structure.
 - Fetch graph data from `POST /api/v1/graph` instead of the paper detail endpoint.
 - Pass `GraphData` to a new `"use client"` wrapper component that renders `GraphCanvas`.
-- Remove the Phase 2 placeholder.
+- Remove the Phase 4 placeholder.
 
 ---
 

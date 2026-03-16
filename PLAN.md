@@ -259,20 +259,41 @@ User opens AI chat
 
 ---
 
-### Phase 2 — Graph Visualization
-**Goal:** Interactive citation graph renders on the graph page.
+### Phase 2 — Initial Graph & Data Fetching (Backend)
+**Goal:** Build the backend graph models and API to fetch citations and references.
 
-- Build backend graph logic (batch fetching citations, radial layout formatting).
-- Expose backend endpoint for graph generation.
-- Implement React Flow canvas and custom nodes/edges on frontend.
-- Add graph controls and styling (color mapping, zoom, etc.).
-- Set up state management for the graph.
+- Define the backend graph data structures (`GraphNode`, `GraphEdge`, `GraphData`).
+- Set up FastAPI routers and the `graph_builder.py` architecture.
+- Fetch citations and references for a seed paper via the paper provider.
 
-**Deliverable:** Graph page shows papers as interactive nodes with citation edges.
+**Deliverable:** Valid graph response structures (Pydantic models) without layout, returning raw fetched papers connected to the seed.
 
 ---
 
-### Phase 3 — AI Paper Analysis
+### Phase 3 — Paper Pools & Similarity (Backend)
+**Goal:** Compute paper pools based on similarity metrics (Bibliographic Coupling and Co-citation).
+
+- Build algorithms to calculate Bibliographic Coupling.
+- Build algorithms to calculate Co-citation.
+- Group the fetched related papers into coherent pools representing specific sub-fields or research directions.
+
+**Deliverable:** An API endpoint that returns categorized paper pools for a given seed paper based on similarity.
+
+---
+
+### Phase 4 — Graph Visualization (Frontend)
+**Goal:** Interactive citation graph renders on the graph page based on paper pools.
+
+- Consume the graph structures and paper pools from Phase 2 and Phase 3 APIs.
+- Implement React Flow canvas and custom nodes/edges on frontend.
+- Add graph controls and styling (color mapping, zoom, layout of paper pools, etc.).
+- Set up state management for the graph.
+
+**Deliverable:** Graph page shows papers as interactive nodes grouped by similarity with citation edges.
+
+---
+
+### Phase 5 — AI Paper Analysis
 **Goal:** Clicking a node shows AI summary and extracted concepts.
 
 - Integrate LLM SDK (Claude/OpenAI) in the backend.
@@ -285,7 +306,7 @@ User opens AI chat
 
 ---
 
-### Phase 4 — Concept Evolution
+### Phase 6 — Concept Evolution
 **Goal:** Clicking a concept shows its timeline across all visible papers.
 
 - Build backend endpoint using structured LLM output to annotate papers based on a concept.
@@ -296,7 +317,7 @@ User opens AI chat
 
 ---
 
-### Phase 5 — AI Chat Sidebar
+### Phase 7 — AI Chat Sidebar
 **Goal:** Natural language Q&A about the visible graph.
 
 - Build streaming chat endpoint in the backend, assembling system prompts based on graph context.
@@ -307,7 +328,7 @@ User opens AI chat
 
 ---
 
-### Phase 6 — Concept Explorer Screen
+### Phase 8 — Concept Explorer Screen
 **Goal:** Standalone page to explore a concept across the literature.
 
 - Build dedicated frontend screen for exploring concepts.
@@ -319,7 +340,7 @@ User opens AI chat
 
 ---
 
-### Phase 7 — Polish + Performance
+### Phase 9 — Polish + Performance
 - Size LRU cache (500 papers, 50 AI analyses) with TTL
 - Graph expansion: "Expand" button merges one more hop without full re-render
 - URL state: encode selected node + active concept in search params (shareable links)

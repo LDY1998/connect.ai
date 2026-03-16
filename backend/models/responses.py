@@ -17,14 +17,8 @@ class Paper(BaseModel):
     url: str | None = None
 
 
-class NodePosition(BaseModel):
-    x: float
-    y: float
-
-
 class GraphNode(BaseModel):
     id: str
-    position: NodePosition
     data: Paper
     type: str = "paper"
 
